@@ -3,9 +3,9 @@
 	"name": "Zettelkasten Boxlist",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "A provement of Zettelkasten note by myself.",
+	"description": "Archive files based on major tags and add links to catalog files.",
 	"author": "Lxl",
 	"authorUrl": "https://github.com/xiangluanliang",
 	"fundingUrl": "https://github.com/xiangluanliang/Zettelkasten-Boxlist",
-	"isDesktopOnly": false
+	"isDesktopOnly": true
 }
