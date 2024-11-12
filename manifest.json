@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "Zettelkasten-Boxlist",
+	"name": "Zettelkasten Boxlist",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "A provement of Zettelkasten note by myself.",
+	"author": "Lxl",
+	"authorUrl": "https://github.com/xiangluanliang",
+	"fundingUrl": "https://github.com/xiangluanliang/Zettelkasten-Boxlist",
 	"isDesktopOnly": false
 }
