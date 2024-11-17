@@ -1,40 +1,32 @@
-import { Plugin, TFile, Notice } from 'obsidian';
-import { normalizePath } from 'obsidian';
+import { TFile, Vault } from "obsidian";
 
 export class FileManager {
-  private plugin: Plugin;
-  private rootFolder = '归档盒子';
+  private plugin: any;
 
-  constructor(plugin: Plugin) {
+  constructor(plugin: any) {
     this.plugin = plugin;
   }
 
-  async archiveToMajorFolder(file: TFile, majorTag: string) {
-    // 确保 "归档盒子/major" 文件夹存在
-    const targetFolder = normalizePath(`${this.rootFolder}/${majorTag}`);
-    await this.plugin.app.vault.createFolder(targetFolder).catch(() => {});
+  /**
+   * 将文件归档到对应的 major 文件夹
+   * @param file 当前文件
+   * @param major 文件的 major 属性
+   */
+  async archiveToMajorFolder(file: TFile, major: string) {
+    try {
+      const targetFolderPath = `归档盒子/${major}`;
+      const targetPath = `${targetFolderPath}/${file.name}`;
 
-    // 移动文件到目标文件夹
-    await this.plugin.app.fileManager.renameFile(file, `${targetFolder}/${file.name}`);
-    
-    // 更新目录
-    await this.addToCatalog(file, majorTag);
-  }
+      // 如果目标文件夹不存在，创建它
+      if (!this.plugin.app.vault.getAbstractFileByPath(targetFolderPath)) {
+        await this.plugin.app.vault.createFolder(targetFolderPath);
+      }
 
-  async addToCatalog(file: TFile, tag: string) {
-    // 找到或创建对应目录文件
-    const catalogFilePath = normalizePath(`${this.rootFolder}/目录/${tag}目录.md`);
-    let catalogFile = this.plugin.app.vault.getAbstractFileByPath(catalogFilePath) as TFile;
-
-    if (!catalogFile) {
-      catalogFile = await this.plugin.app.vault.create(catalogFilePath, `# ${tag} 目录\n\n`);
-    }
-
-    // 添加链接到目录文件末尾
-    const fileLink = `[[${file.basename}]]`;
-    const content = await this.plugin.app.vault.read(catalogFile);
-    if (!content.includes(fileLink)) {
-      await this.plugin.app.vault.append(catalogFile, `\n${fileLink}`);
+      // 移动文件
+      await this.plugin.app.fileManager.renameFile(file, targetPath);
+      console.log(`文件已移动到 ${targetPath}`);
+    } catch (err) {
+      console.error(`移动文件到 major 文件夹失败: ${err}`);
     }
   }
 }

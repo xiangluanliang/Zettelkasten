@@ -1,37 +1,32 @@
-import { Plugin } from 'obsidian';
+import { TFile, Notice, Vault } from "obsidian";
 
 export class TagManager {
-  private plugin: Plugin;
-  private tags: Set<string>; // 储存所有标签
+  private plugin: any;
 
-  constructor(plugin: Plugin) {
+  constructor(plugin: any) {
     this.plugin = plugin;
-    this.tags = new Set();
   }
 
-  async loadTags() {
-    // 从插件设置或文件中加载标签
-    const savedTags = await this.plugin.loadData();
-    if (savedTags) {
-      this.tags = new Set(savedTags);
+  /**
+   * 在指定标签的目录文件中添加引用
+   * @param file 当前文件
+   * @param tag 标签名称
+   */
+  async addToCatalog(file: TFile, tag: string) {
+    try {
+      const catalogPath = `归档盒子/目录/${tag}.md`;
+      const fileContent = await this.plugin.app.vault.adapter.read(catalogPath).catch(() => "");
+      const reference = `[[${file.basename}]]`;
+
+      if (!fileContent.includes(reference)) {
+        const updatedContent = fileContent + `\n- ${reference}`;
+        await this.plugin.app.vault.adapter.write(catalogPath, updatedContent);
+        new Notice(`已将 [[${file.basename}]] 添加到 ${tag}.md`);
+      } else {
+        console.log(`引用已存在于 ${tag}.md`);
+      }
+    } catch (err) {
+      console.error(`添加引用到目录文件失败: ${err}`);
     }
-  }
-
-  async saveTags() {
-    await this.plugin.saveData(Array.from(this.tags));
-  }
-
-  addTag(tag: string) {
-    this.tags.add(tag);
-    this.saveTags();
-  }
-
-  getAllTags() {
-    return Array.from(this.tags);
-  }
-
-  isMajorTag(tag: string): boolean {
-    // 定义 major 标签的规则
-    return ['数学', '计算机'].includes(tag);
   }
 }

@@ -1,24 +1,28 @@
-import { Plugin } from 'obsidian';
-import { ArchiveButton } from './src/archiveButton';
-import { TagManager } from './src/tagManager';
+import { Plugin } from "obsidian";
+import { ArchiveButton } from "./src/archiveButton";
+import { FileManager } from "./src/fileManager";
+import { TagManager } from "./src/tagManager";
 
 export default class ArchivePlugin extends Plugin {
-  private tagManager: TagManager;
-  private archiveButton: ArchiveButton;
+  private archiveButton: ArchiveButton | null = null;
 
   async onload() {
-    console.log('加载 ArchivePlugin 插件');
+    console.log("ArchivePlugin loaded!");
 
-    // 初始化标签管理和归档按钮
-    this.tagManager = new TagManager(this);
-    await this.tagManager.loadTags(); // 从设置或文件加载标签
+    const fileManager = new FileManager(this);
+    const tagManager = new TagManager(this);
 
+    // 初始化归档按钮
     this.archiveButton = new ArchiveButton(this);
     this.archiveButton.addArchiveButton();
   }
 
   onunload() {
-    console.log('卸载 ArchivePlugin 插件');
-    this.archiveButton.removeArchiveButton();
+    console.log("ArchivePlugin unloaded!");
+
+    // 移除归档按钮
+    if (this.archiveButton) {
+      this.archiveButton.removeArchiveButton();
+    }
   }
 }
